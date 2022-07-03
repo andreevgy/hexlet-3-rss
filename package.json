@@ -1,0 +1,40 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "RSS-aggregator project for Hexlet Course",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest",
+    "build": "NODE_ENV=production webpack --mode production",
+    "start": "nodemon --watch ./src --watch ./index.html --exec npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreevgy/frontend-project-lvl3.git"
+  },
+  "author": "Gleb Andreev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreevgy/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/andreevgy/frontend-project-lvl3#readme",
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "eslint": "^8.17.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "postcss-loader": "^7.0.0",
+    "postcss-preset-env": "^7.7.1",
+    "sass": "^1.52.3",
+    "sass-loader": "^13.0.0",
+    "style-loader": "^3.3.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
+  }
+}
