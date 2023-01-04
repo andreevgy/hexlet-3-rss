@@ -10,7 +10,12 @@ const app = () => {
 	const elements = {
 		form: document.querySelector("form"),
 		input: document.querySelector("#url-input"),
-		inputError: document.querySelector("#error-container"),
+		inputFeedback: document.querySelector("#input-feedback-container"),
+	}
+
+	const initialState = {
+		rssList: [],
+		inputFeedback: null,
 	}
 
 	const i18nextInstance = i18next.createInstance();
@@ -23,7 +28,7 @@ const app = () => {
 		setLocale(locale);
 		const urlValidator = string().url().required();
 
-		const state = createState(i18nextInstance, elements);
+		const state = createState(i18nextInstance, elements, initialState);
 
 		const validateUrl = (url, urlsList) => {
 			const urlSchema = urlValidator.notOneOf(urlsList);
@@ -37,10 +42,10 @@ const app = () => {
 			validateUrl(url, state.rssList)
 				.then(() => {
 					state.rssList.push(url);
-					state.inputError = null;
+					state.inputFeedback = "success";
 				})
 				.catch((err) => {
-					state.inputError = err.message.key;
+					state.inputFeedback = err.message.key;
 				});
 		});
 	});
