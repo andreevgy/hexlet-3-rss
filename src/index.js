@@ -86,6 +86,7 @@ const app = () => {
 		submitButton: document.querySelector("#submit-button"),
 		feeds: document.querySelector('.feeds'),
 		posts: document.querySelector('.posts'),
+		modal: document.querySelector('#modal'),
 	}
 
 	const initialState = {
@@ -94,6 +95,8 @@ const app = () => {
 		isRssLoading: false,
 		posts: [],
 		feeds: [],
+		openedPostId: null,
+		seenPosts: new Set(),
 	}
 
 	const i18nextInstance = i18next.createInstance();
@@ -123,9 +126,18 @@ const app = () => {
 					loadRss(state, url);
 				})
 				.catch((err) => {
-					console.log(err);
 					state.inputFeedback = err.message.key;
 				});
+		});
+
+		elements.posts.addEventListener('click', (evt) => {
+			if (!('id' in evt.target.dataset)) {
+				return;
+			}
+
+			const { id } = evt.target.dataset;
+			state.openedPostId = id;
+			state.seenPosts.add(id);
 		});
 
 		setTimeout(() => fetchNewPosts(state), fetchingTimeout);

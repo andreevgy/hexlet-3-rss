@@ -8,6 +8,7 @@ export default {
 		successLoad: 'RSS успешно загружен',
 		feeds: 'Фиды',
 		posts: 'Посты',
+		preview: 'Просмотр',
 	},
 };
 
