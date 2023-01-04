@@ -1,20 +1,18 @@
 import onChange from "on-change";
 
-export const createState = (i18next) => {
-	const input = document.querySelector("#url-input");
-	const errorContainer = document.querySelector("#error-container");
-
+export const createState = (i18next, elements) => {
 	return onChange({
 		inputError: null,
 		rssList: [],
 	}, (path, value) => {
 		if (path === "inputError") {
 			if (value === null) {
-				input.className = 'form-control w-100';
-				errorContainer.textContent = '';
+				elements.input.classList.remove("is-invalid");
+				elements.input.value = "";
+				elements.inputError.textContent = '';
 			} else {
-				input.className = 'form-control w-100 is-invalid'
-				errorContainer.textContent = i18next.t([`errors.${value}`]);
+				elements.input.classList.add("is-invalid");
+				elements.inputError.textContent = i18next.t([`errors.${value}`]);
 			}
 		}
 	});

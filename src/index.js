@@ -6,15 +6,12 @@ import i18next from "i18next";
 import locale from "./locales/yupLocale";
 import ru from "./locales/ru";
 
-const prepareForm = (form, input) => {
-	form.reset();
-	input.focus();
-	input.className = 'form-control w-100';
-}
-
 const app = () => {
-	const form = document.querySelector("form");
-	const input = document.querySelector("#url-input");
+	const elements = {
+		form: document.querySelector("form"),
+		input: document.querySelector("#url-input"),
+		inputError: document.querySelector("#error-container"),
+	}
 
 	const i18nextInstance = i18next.createInstance();
 
@@ -25,17 +22,15 @@ const app = () => {
 	}).then(() => {
 		setLocale(locale);
 		const urlValidator = string().url().required();
-		prepareForm(form, input);
 
-		const state = createState(i18nextInstance);
+		const state = createState(i18nextInstance, elements);
 
 		const validateUrl = (url, urlsList) => {
 			const urlSchema = urlValidator.notOneOf(urlsList);
-
 			return urlSchema.validate(url);
 		}
 
-		form.addEventListener("submit", (event) => {
+		elements.form.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const data = new FormData(event.target);
 			const url = data.get("url");
@@ -43,7 +38,6 @@ const app = () => {
 				.then(() => {
 					state.rssList.push(url);
 					state.inputError = null;
-					prepareForm(form, input);
 				})
 				.catch((err) => {
 					state.inputError = err.message.key;
