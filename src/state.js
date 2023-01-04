@@ -1,6 +1,6 @@
 import onChange from "on-change";
 
-export const createState = () => {
+export const createState = (i18next) => {
 	const input = document.querySelector("#url-input");
 	const errorContainer = document.querySelector("#error-container");
 
@@ -14,7 +14,7 @@ export const createState = () => {
 				errorContainer.textContent = '';
 			} else {
 				input.className = 'form-control w-100 is-invalid'
-				errorContainer.textContent = value;
+				errorContainer.textContent = i18next.t([`errors.${value}`]);
 			}
 		}
 	});

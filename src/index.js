@@ -1,7 +1,10 @@
 import './app.scss';
 import 'bootstrap';
-import { string} from "yup";
-import { createState } from "./state";
+import {string, setLocale} from "yup";
+import {createState} from "./state";
+import i18next from "i18next";
+import locale from "./locales/yupLocale";
+import ru from "./locales/ru";
 
 const prepareForm = (form, input) => {
 	form.reset();
@@ -9,35 +12,44 @@ const prepareForm = (form, input) => {
 	input.className = 'form-control w-100';
 }
 
-const urlValidator = string().url();
-
 const app = () => {
 	const form = document.querySelector("form");
 	const input = document.querySelector("#url-input");
 
-	prepareForm(form, input);
+	const i18nextInstance = i18next.createInstance();
 
-	const state = createState();
+	i18nextInstance.init({
+		lng: 'ru',
+		debug: false,
+		resources: {ru},
+	}).then(() => {
+		setLocale(locale);
+		const urlValidator = string().url().required();
+		prepareForm(form, input);
 
-	form.addEventListener("submit", (event) => {
-		event.preventDefault();
-		const data = new FormData(event.target);
-		const url = data.get("url");
-		urlValidator.validate(url)
-			.then(() => {
-				if (state.rssList.includes(url)) {
-					state.inputError = "This url is already added";
-					return;
-				}
-				state.rssList.push(url);
-				state.inputError = null;
-				prepareForm(form, input);
-			})
-			.catch(() => {
-				state.inputError = "URL is not valid";
-			});
+		const state = createState(i18nextInstance);
+
+		const validateUrl = (url, urlsList) => {
+			const urlSchema = urlValidator.notOneOf(urlsList);
+
+			return urlSchema.validate(url);
+		}
+
+		form.addEventListener("submit", (event) => {
+			event.preventDefault();
+			const data = new FormData(event.target);
+			const url = data.get("url");
+			validateUrl(url, state.rssList)
+				.then(() => {
+					state.rssList.push(url);
+					state.inputError = null;
+					prepareForm(form, input);
+				})
+				.catch((err) => {
+					state.inputError = err.message.key;
+				});
+		});
 	});
-
 }
 
 app();
