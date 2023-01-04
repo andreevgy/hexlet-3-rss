@@ -8,6 +8,8 @@ import ru from "./locales/ru";
 import axios from 'axios';
 import parse from './rssParser';
 
+const fetchingTimeout = 5000;
+
 let numericId = 0;
 
 const generateNewId = () => {
@@ -39,7 +41,7 @@ const loadRss = (state, url) => {
 			const feed = {
 				url, title: data.title, description: data.description, id: generateNewId(),
 			};
-			const posts = data.items.map((item) => ({ ...item, channelId: feed.id, id: generateNewId(), }));
+			const posts = data.items.map((item) => ({ ...item, feedId: feed.id, id: generateNewId(), }));
 			state.posts.unshift(...posts);
 			state.feeds.unshift(feed);
 
@@ -52,6 +54,28 @@ const loadRss = (state, url) => {
 		.finally(() => {
 			state.isRssLoading = false;
 		});
+};
+
+const fetchNewPosts = (state) => {
+	const promises = state.feeds.map((feed) => {
+		const urlWithProxy = addProxy(feed.url);
+		return axios.get(urlWithProxy)
+			.then((response) => {
+				const feedData = parse(response.data.contents);
+				const newPosts = feedData.items.map((item) => ({ ...item, feedId: feed.id }));
+				const oldPosts = state.posts.filter((post) => post.feedId === feed.id);
+				const missingPosts = newPosts
+					.filter(newPost => !oldPosts.find(oldPost => oldPost.title === newPost.title))
+					.map(p => ({ ...p, id: generateNewId() }))
+				state.posts.unshift(...missingPosts);
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+	});
+	Promise.all(promises).finally(() => {
+		setTimeout(() => fetchNewPosts(state), fetchingTimeout);
+	});
 };
 
 const app = () => {
@@ -103,6 +127,8 @@ const app = () => {
 					state.inputFeedback = err.message.key;
 				});
 		});
+
+		setTimeout(() => fetchNewPosts(state), fetchingTimeout);
 	});
 }
 
