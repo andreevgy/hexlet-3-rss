@@ -6,6 +6,8 @@ export default {
 			notUrl: 'Ссылка должна быть валидным URL',
 		},
 		successLoad: 'RSS успешно загружен',
+		feeds: 'Фиды',
+		posts: 'Посты',
 	},
 };
 
