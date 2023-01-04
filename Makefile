@@ -6,7 +6,7 @@ install:
 
 build:
 	rm -rf dist
-	NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider npx webpack
+	npm run build
 
 test:
 	npm test
