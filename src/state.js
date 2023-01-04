@@ -15,7 +15,7 @@ export const createState = (i18next, elements, initState) => {
 		} else {
 			elements.input.classList.add("is-invalid");
 			elements.inputFeedback.classList.add("text-danger");
-			elements.inputFeedback.textContent = i18next.t(`errors.${state.inputFeedback}`);
+			elements.inputFeedback.textContent = i18next.t([`errors.${state.inputFeedback}`, `errors.unknown`]);
 		}
 	}
 
@@ -110,6 +110,14 @@ export const createState = (i18next, elements, initState) => {
 		fullArticleBtn.href = post.link;
 	};
 
+	const handleRssLoadingError = (state) => {
+		if (state.rssLoadingError !== null) {
+			elements.input.classList.add("is-invalid");
+			elements.inputFeedback.classList.add("text-danger");
+			elements.inputFeedback.textContent = i18next.t([`errors.${state.rssLoadingError}`, `errors.unknown`]);
+		}
+	}
+
 	return onChange(initState, (path) => {
 		switch (path) {
 			case "inputFeedback":
@@ -129,6 +137,9 @@ export const createState = (i18next, elements, initState) => {
 				break;
 			case 'openedPostId':
 				handleOpenedPost(initState);
+				break;
+			case 'rssLoadingError':
+				handleRssLoadingError(initState);
 				break;
 			default:
 				break
